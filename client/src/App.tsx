@@ -4,7 +4,11 @@ import type { AnalyzeResponse, RoiEstimate } from './types';
 const samplePrompt =
   'User downloads a CSV from the finance portal, removes duplicate rows, standardizes customer names, uploads the cleaned file to Salesforce CRM, and emails the sales team that the import is complete.';
 
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8787';
+const configuredApiBaseUrl = import.meta.env.VITE_API_URL?.trim().replace(/\/+$/g, '');
+const isLocalDevelopmentHost =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const apiBaseUrl = configuredApiBaseUrl || (isLocalDevelopmentHost ? 'http://localhost:8787' : '');
 
 type RoiInputs = {
   annualRuns: number;
@@ -27,6 +31,12 @@ export default function App() {
     setError(null);
 
     try {
+      if (!apiBaseUrl) {
+        throw new Error(
+          'API is not configured for this deployment. Set VITE_API_URL to your deployed backend URL.'
+        );
+      }
+
       const response = await fetch(`${apiBaseUrl}/analyze-process`, {
         method: 'POST',
         headers: {
