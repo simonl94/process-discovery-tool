@@ -13,7 +13,7 @@ Turn rough process descriptions into:
 - Backend: Node.js + Express + TypeScript
 - AI layer: heuristic by default, optional OpenAI integration via env vars
 
-## Run tasks
+## Run tasks steps
 
 Install dependencies:
 
